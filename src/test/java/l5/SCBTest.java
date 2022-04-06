@@ -1,25 +1,42 @@
+package l5;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 
 import java.time.Duration;
 
-public class main {
-    public static void main(String[] args) throws InterruptedException {
+public class SCBTest {
+
+    WebDriver driver;
+    WebDriverWait webDriverWait;
+    Actions actions;
+    private final static String SCB_BASE_URL = "https://sovcombank.ru/";
+
+    @BeforeAll
+    static void registerDriver() {
         WebDriverManager.chromedriver().setup();
+    }
 
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--disable-notifications");
-        chromeOptions.addArguments("--start-maximized");
+    @BeforeEach
+    void setupDriver() {
+        driver = new ChromeDriver();
+        webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        actions = new Actions(driver);
+        driver.get(SCB_BASE_URL);
+    }
 
-        WebDriver driver = new ChromeDriver();
+    @Test
+    void SendApplicationForALoan() {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-
-        driver.get("https://sovcombank.ru/");
         driver.findElement(By.xpath("//*[@id=\"__next\"]/div/header/nav[2]/div[2]/div/div/a[2]")).click();
         driver.findElement(By.xpath("//*[@id=\"__next\"]/div/main/section[2]/div/ul/li[1]/a")).click();
 
@@ -48,6 +65,8 @@ public class main {
 
         driver.findElement(By.xpath("//*[contains(text(),\"ОТПРАВИТЬ\")]")).click();
 
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),\"Заявка отправлена\")]")));
+
         boolean present;
         try {
             driver.findElement(By.xpath("//*[contains(text(),\"Заявка отправлена\")]"));
@@ -56,6 +75,8 @@ public class main {
             present = false;
         }
 
-        System.out.println("Has the test been passed? " + present);
+        Assertions.assertEquals(present, true );
+
     }
+
 }
