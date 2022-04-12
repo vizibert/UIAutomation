@@ -1,16 +1,14 @@
-package l5;
+package hw5;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 
 import java.time.Duration;
 
@@ -37,8 +35,8 @@ public class SCBTest {
     @Test
     void SendApplicationForALoan() {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-        driver.findElement(By.xpath("//*[@id=\"__next\"]/div/header/nav[2]/div[2]/div/div/a[2]")).click();
-        driver.findElement(By.xpath("//*[@id=\"__next\"]/div/main/section[2]/div/ul/li[1]/a")).click();
+        driver.findElement(By.xpath("//*[@id=\"__next\"]//a[text()='Кредиты']")).click();
+        driver.findElement(By.xpath("//*[@class=\"container py-14\"]//*[text()='Кредиты наличными']")).click();
 
         WebElement creditSum = driver.findElement(By.xpath("//*[@id=\"credit-sum\"]/div/input"));
         creditSum.click();
@@ -67,15 +65,7 @@ public class SCBTest {
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),\"Заявка отправлена\")]")));
 
-        boolean present;
-        try {
-            driver.findElement(By.xpath("//*[contains(text(),\"Заявка отправлена\")]"));
-            present = true;
-        } catch (NoSuchElementException e) {
-            present = false;
-        }
-
-        Assertions.assertEquals(present, true );
+        Assertions.assertTrue(driver.findElement(By.xpath("//*[contains(text(),\"Заявка отправлена\")]")).isDisplayed());
 
     }
 
